@@ -1,11 +1,11 @@
 #include "proyecto.h"
-// Grafo
-void zonaActual(int node, List *graph, int *numNeighbors)
+
+void zonaActual(int node, List2 *graph, int *numNeighbors)
 {
-    List list = graph[node];
-    Node *current = list.head->next;
+    List2 List2 = graph[node];
+    Node *current = List2.head->next;
     int i = 0;
-    printf("\nZona actual: %d\n", list.head->data);
+    printf("\nZona actual: %d\n", List2.head->data);
     printf("A que zona quieres ir?: ");
     while (current != NULL)
     {
@@ -27,35 +27,35 @@ Node *create_vertex_node(int data)
     return node;
 }
 
-List create_simple_list()
+List2 create_simple_List()
 {
-    List list;
-    list.size = 0;
-    list.head = NULL;
+    List2 List2;
+    List2.size = 0;
+    List2.head = NULL;
 
-    return list;
+    return List2;
 }
 
-void add_node_to_list(List *list, int data)
+void add_node_to_List(List2 *List2, int data)
 {
     Node *node = create_vertex_node(data);
 
-    Node *temp = list->head;
+    Node *temp = List2->head;
     while (temp->next != NULL)
     {
         temp = temp->next;
     }
 
     temp->next = node;
-    list->size += 1;
+    List2->size += 1;
 }
 
-void print_simple_list(List list)
+void print_simple_List(List2 List2)
 {
-    Node *temp = list.head;
+    Node *temp = List2.head;
 
     printf("Vertice ");
-    for (int i = 0; i < list.size; i++)
+    for (int i = 0; i < List2.size; i++)
     {
         printf("%d -> ", temp->data);
         temp = temp->next;
@@ -63,29 +63,29 @@ void print_simple_list(List list)
     printf("NULL");
 }
 
-void create_graph(List *arr)
+void create_graph(List2 *arr)
 {
     for (int i = 0; i < VERTEX_NUMBER; i++)
     {
-        List list = create_simple_list();
-        list.head = create_vertex_node(i);
-        list.size = 1;
+        List2 List2 = create_simple_List();
+        List2.head = create_vertex_node(i);
+        List2.size = 1;
 
-        arr[i] = list;
+        arr[i] = List2;
     }
 }
 
-void add_node_to_graph(List *arr, int node, int data)
+void add_node_to_graph(List2 *arr, int node, int data)
 {
-    List *list = &arr[node];
-    add_node_to_list(list, data);
+    List2 *List2 = &arr[node];
+    add_node_to_List(List2, data);
 }
 
-void print_graph(List *graph)
+void print_graph(List2 *graph)
 {
     for (int i = 0; i < VERTEX_NUMBER; i++)
     {
-        print_simple_list(graph[i]);
+        print_simple_List(graph[i]);
         printf("\n");
     }
 }
