@@ -1,13 +1,72 @@
+#include "proyecto.h"
 
-// Logica central
+void inicializar_jugador(Jugador *jug, char *n)
+{
+    int clase;
+    printf("\nSelecciona una clase:\n\n1. Guerrero: Vida: 2000, Stamina: 20, Dano: 750, Agilidad: 5.\n\nLos guerreros tienen mucha vida y resistencia, lo que les permite aguantar mucho daño y\n mantenerse en pie durante mucho tiempo en el campo de batalla. Aunque no son muy agiles, su\n fuerza y habilidad con armas pesadas les permiten infligir un gran dano.\n\n2. Mago: Vida: 750, Stamina: 10, Dano: 200, Agilidad: 13.\n\nLos magos no tienen mucha vida ni resistencia fisica, pero su habilidad con la magia les permite \ncausar un gran dano a distancia. Son muy agiles y pueden evadir los ataques enemigos con\n facilidad, pero necesitan gestionar su stamina cuidadosamente para no quedarse sin mana durante \nuna pelea.\n\n3. Ladron: Vida: 1000, Stamina: 15, Dano: 500, Agilidad: 12.\n\nLos ladrones tienen una vida y resistencia media, pero son muy agiles y habiles con armas agiles\n como dagas y arcos. Pueden infligir un gran dano con ataques criticos y pueden desactivar trampas\n y abrir cerraduras.\n\n4. Clerigo: Vida: 1500, Stamina: 15, Dano: 300, Agilidad: 8.\n\nLos clerigos tienen una vida y resistencia media, pero su habilidad con la magia divina les permite\n curar a los aliados y causar un dano magico a los enemigos. No son muy agiles, pero\n tienen habilidades para proteger a sus aliados y resistir el dano magico.\n\nElija una opcion> ");
+    jug->name = (char *)malloc(strlen(n) + 1);
+    strcpy(jug->name, n);
+    scanf("%d", &clase);
+    switch (clase)
+    {
+    case GUERRERO:
+        jug->vida = 2000;
+        jug->stamina = 20;
+        jug->dano = 750;
+        jug->agilidad = 3;
+        jug->posGf = 0;
+        jug->pociones = 0;
+        strcpy(jug->clase, "Guerrero");
+        break;
+    case MAGO:
+        jug->vida = 750;
+        jug->stamina = 10;
+        jug->dano = 200;
+        jug->agilidad = 5;
+        jug->posGf = 0;
+        jug->pociones = 0;
+        strcpy(jug->clase, "Mago");
+        break;
+    case LADRON:
+        jug->vida = 1000;
+        jug->stamina = 15;
+        jug->dano = 500;
+        jug->agilidad = 6;
+        jug->posGf = 0;
+        jug->pociones = 0;
+        strcpy(jug->clase, "Ladron");
+        break;
+    case CLERICO:
+        jug->vida = 1500;
+        jug->stamina = 15;
+        jug->dano = 300;
+        jug->agilidad = 1;
+        jug->posGf = 0;
+        jug->pociones = 0;
+        strcpy(jug->clase, "Clerico");
+        break;
+    default:
+        break;
+    }
+    jug->fuenteHabilidad = 0;
+    jug->Inventario = create_list();
+}
+void inicializar_enemy(Enemy *ene, char *n, int v, char *des)
+{
+    ene->name = (char *)malloc(strlen(n) + 1);
+    strcpy(ene->name, n);
+    ene->vida = v;
+    ene->descrip = (char *)malloc(strlen(des) + 1);
+    strcpy(ene->descrip, des);
+}
 
-void menu(Enemy *enemys, List *grafo)
+void menu(Enemy *enemys, List2 *grafo)
 
 {
     Jugador jug;
     int option, empty;
     char nombre[15];
-    char archivo[17];
+    char archivo[17] = "estadisticas.txt";
     dibujo2();
     while (option != 3)
     {
@@ -32,7 +91,6 @@ void menu(Enemy *enemys, List *grafo)
             menuPrincipal(&jug, enemys, grafo);
             break;
         case 2:
-            archivo[17] = "estadisticas.txt";
             empty = isFileEmpty(archivo);
             if (empty != 1)
             {
@@ -50,7 +108,7 @@ void menu(Enemy *enemys, List *grafo)
     }
 }
 
-void menuPrincipal(Jugador *jug, Enemy *enemys, List *grafo)
+void menuPrincipal(Jugador *jug, Enemy *enemys, List2 *grafo)
 {
     int option, j, flag, x;
     while (option != 6 && jug->vida > 0)
@@ -74,7 +132,7 @@ void menuPrincipal(Jugador *jug, Enemy *enemys, List *grafo)
                 enemys[jug->posGf] = pelea(jug->posGf, jug, enemys);
             else
             {
-                zonaActual(jug->posGf, grafo, &zonasPosibles);
+                zonaActual(jug->posGf, grafo, zonasPosibles);
                 printf("\nSeleccione una zona > ");
                 while (flag == 0)
                 {
@@ -137,11 +195,6 @@ void bestiario(Enemy *enemys)
         }
     }
     printf("\n");
-}
-
-void printLinea()
-{
-    printf("\n------------------------------------------------------------------------------------------------------\n");
 }
 
 void explorar(Jugador *jud, Enemy *enemys)
@@ -460,106 +513,6 @@ void inventario(Jugador *jug)
     }
 }
 
-void guardarEstadisticas(Jugador *jugador, Enemy *enemigos, int numEnemigos)
-{
-    FILE *archivo = fopen("estadisticas.txt", "w");
-
-    fprintf(archivo, "Jugador:\n");
-    fprintf(archivo, "Nombre: %s\n", jugador->name);
-    fprintf(archivo, "Vida: %d\n", jugador->vida);
-    fprintf(archivo, "Stamina: %d\n", jugador->stamina);
-    fprintf(archivo, "Daño: %d\n", jugador->dano);
-    fprintf(archivo, "Agilidad: %d\n", jugador->agilidad);
-    fprintf(archivo, "Fuente de Habilidad: %d\n", jugador->fuenteHabilidad);
-    fprintf(archivo, "Clase: %s\n", jugador->clase);
-    fprintf(archivo, "Posicion en el juego: %d\n", jugador->posGf);
-    fprintf(archivo, "Pociones: %d\n", jugador->pociones);
-    fprintf(archivo, "\n");
-    fprintf(archivo, "Inventario:\n");
-    Objeto *current = jugador->Inventario.head;
-    while (current != NULL)
-    {
-        fprintf(archivo, "Objeto: %s\n", current->data);
-        current = current->next;
-    }
-    fprintf(archivo, "\n");
-    fprintf(archivo, "Enemigos:\n");
-    for (int i = 0; i < numEnemigos; i++)
-    {
-        fprintf(archivo, "Nombre: %s\n", enemigos[i].name);
-        fprintf(archivo, "Vida: %d\n", enemigos[i].vida);
-        fprintf(archivo, "Descripcion: %s\n", enemigos[i].descrip);
-        fprintf(archivo, "\n");
-    }
-
-    fclose(archivo);
-}
-
-void cargarEstadisticas(Jugador *jugador, Enemy **enemigos, int *numEnemigos)
-{
-    FILE *archivo = fopen("estadisticas.txt", "r");
-
-    char buffer[100];
-    while (fgets(buffer, sizeof(buffer), archivo) != NULL)
-    {
-        if (strcmp(buffer, "Jugador:\n") == 0)
-        {
-            fgets(buffer, sizeof(buffer), archivo); // Leer nombre
-            jugador->name = strdup(buffer + strlen("Nombre: "));
-            fgets(buffer, sizeof(buffer), archivo); // Leer vida
-            jugador->vida = atoi(buffer + strlen("Vida: "));
-            fgets(buffer, sizeof(buffer), archivo); // Leer stamina
-            jugador->stamina = atoi(buffer + strlen("Stamina: "));
-            fgets(buffer, sizeof(buffer), archivo); // Leer daño
-            jugador->dano = atoi(buffer + strlen("Daño: "));
-            fgets(buffer, sizeof(buffer), archivo); // Leer agilidad
-            jugador->agilidad = atoi(buffer + strlen("Agilidad: "));
-            fgets(buffer, sizeof(buffer), archivo); // Leer fuente de habilidad
-            jugador->fuenteHabilidad = atoi(buffer + strlen("Fuente de Habilidad: "));
-            fgets(buffer, sizeof(buffer), archivo); // Leer clase
-            strcpy(jugador->clase, buffer + strlen("Clase: "));
-            fgets(buffer, sizeof(buffer), archivo); // Leer posicion en el juego
-            jugador->posGf = atoi(buffer + strlen("Posicion en el juego: "));
-            fgets(buffer, sizeof(buffer), archivo); // Leer pociones
-            jugador->pociones = atoi(buffer + strlen("Pociones: "));
-        }
-        else if (strcmp(buffer, "Inventario:\n") == 0)
-        {
-            List inventario = create_list();
-            while (fgets(buffer, sizeof(buffer), archivo) != NULL && strcmp(buffer, "\n") != 0)
-            {
-                if (strncmp(buffer, "Objeto: ", strlen("Objeto: ")) == 0)
-                {
-                    char *objeto = strdup(buffer + strlen("Objeto: "));
-                    push(&inventario, objeto);
-                }
-            }
-            jugador->Inventario = inventario;
-        }
-        else if (strcmp(buffer, "Enemigos:\n") == 0)
-        {
-            // Codigo para cargar enemigos
-        }
-    }
-
-    fclose(archivo);
-}
-
-int isFileEmpty(const char *filename)
-{
-    FILE *file = fopen(filename, "r");
-
-    fseek(file, 0, SEEK_END);
-    if (ftell(file) == 0)
-    {
-        fclose(file);
-        return 1; // El archivo esta vacio
-    }
-
-    fclose(file);
-    return 0; // El archivo no esta vacio
-}
-#include "proyecto.h"
 void estadisticas(Jugador *jug)
 {
     int opcion;
@@ -597,37 +550,4 @@ void estadisticas(Jugador *jug)
         }
         jug->fuenteHabilidad--;
     }
-}
-void dibujo()
-{
-    printf("      _                      _______                      _\n");
-    printf("   _dMMMb._              .adOOOOOOOOOba.              _,dMMMb_\n");
-    printf("  dP'  ~YMMb            dOOOOOOOOOOOOOOOb            aMMP~  `Yb\n");
-    printf("  V      ~\"Mb          dOOOOOOOOOOOOOOOOOb          dM\"~      V\n");
-    printf("           `Mb.       dOOOOOOOOOOOOOOOOOOOb       ,dM'\n");
-    printf("            `YMb._   |OOOOOOOOOOOOOOOOOOOOO|   _,dMP'\n");
-    printf("       __     `YMMM| OP'~\"YOOOOOOOOOOOP\"~`YO |MMMP'     __\n");
-    printf("     ,dMMMb.     ~~' OO     `YOOOOOP'     OO `~~     ,dMMMb.\n");
-    printf("  _,dP~  `YMba_      OOb      `OOO'      dOO      _aMMP'  ~Yb._\n");
-    printf(" <MMP'     `~YMMa_   YOOo   @  OOO  @   oOOP   _adMP~'      `YMM>\n");
-    printf("              `YMMMM\\`OOOo     OOO     oOOO'/MMMMP'\n");
-    printf("      ,aa.     `~YMMb `OOOb._,dOOOb._,dOOO'dMMP~'       ,aa.\n");
-    printf("    ,dMYYMba._         `OOOOOOOOOOOOOOOOO'          _,adMYYMb.\n");
-    printf("   ,MP'   `YMMba._      OOOOOOOOOOOOOOOOO       _,adMMP'   `YM.\n");
-    printf("   MP'        ~YMMMba._ YOOOOPVVVVVYOOOOP  _,adMMMMP~       `YM\n");
-    printf("   YMb           ~YMMMM\\`OOOOI`````IOOOOO'/MMMMP~           dMP\n");
-    printf("    `Mb.           `YMMMb`OOOI,,,,,IOOOO'dMMMP'           ,dM'\n");
-    printf("      `'                  `OObNNNNNdOO'                   `'\n");
-    printf("                            `~OOOOO~'  \n");
-}
-void dibujo2()
-{
-    printf(" _   __        _         _      _         ___       _                      _                           \n");
-    printf("| | / /       (_)       | |    | |       / _ \\     | |                    | |                          \n");
-    printf("| |/ /  _ __   _   __ _  | |__  | |_     / /_\\ \\  __| |__   __  ___  _ __  | |_  _   _  _ __   ___  ___ \n");
-    printf("|    \\ | '_ \\ | | / _` | | '_ \\ | __|    |  _  | / _` |\\ \\ / / / _ \\| '_ \\ | __|| | | || '__| / _ \\/ __|\n");
-    printf("| |\\  \\| | | || || (_| | | | | || |_     | | | || (_| | \\ V / |  __/| | | || |_ | |_| || |   |  __/\\__ \\\n");
-    printf("\\_| \\_/|_| |_|\\__, | |_| |_| \\__|    \\_| |_/ \\__,_|  \\_/   \\___||_| |_| \\__| \\__,_||_|    \\___||___/\n");
-    printf("               __/ |                                                                                   \n");
-    printf("              |___/                                                                                    \n");
 }
