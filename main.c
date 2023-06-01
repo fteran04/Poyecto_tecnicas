@@ -15,7 +15,7 @@ int main()
     arregloEnemys[2] = Crysanthea;
     arregloEnemys[3] = Gorgath;
     arregloEnemys[4] = Xoron_Dragon_del_Abismo;
-    List graph[VERTEX_NUMBER];
+    List2 graph[VERTEX_NUMBER];
     create_graph(graph);
 
     add_node_to_graph(graph, 0, 1);
