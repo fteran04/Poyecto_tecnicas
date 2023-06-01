@@ -1,10 +1,10 @@
+#ifndef LOGICA_CENTRAL
+#define LOGICA_CENTRAL
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
-#ifndef tecnicas_h
-#define tecnicas_h
-
 
 /*Constantes:*/
 #define VERTEX_NUMBER 5
@@ -70,12 +70,17 @@ typedef struct Jugador
     int pociones;
 
 } Jugador;
-
 typedef struct Node
 {
     int data;
     struct Node *next;
 } Node;
+
+typedef struct List2
+{
+    int size;
+    struct Node *head;
+} List2;
 
 /*Prototipos*/
 
@@ -92,8 +97,8 @@ char *infoLista(List list, int position);
 void remove_string(List *list, char *data);
 void insertSorted(List *list, Objeto *objeto);
 // Funciones de logica central
-void menu(Enemy *enemys, List *grafo);
-void menuPrincipal(Jugador *jug, Enemy *enemys, List *grafo);
+void menu(Enemy *enemys, List2 *grafo);
+void menuPrincipal(Jugador *jug, Enemy *enemys, List2 *grafo);
 void bestiario(Enemy *enemys);
 void printLinea();
 void explorar(Jugador *jud, Enemy *enemys);
@@ -106,13 +111,15 @@ void dibujo2();
 // grafo
 Node *create_vertex_node(int data);
 List create_simple_list();
-void add_node_to_list(List *list, int data);
-void print_simple_list(List list);
-void create_graph(List *arr);
-void add_node_to_graph(List *arr, int node, int data);
-void print_graph(List *graph);
-void zonaActual(int node, List *graph, int *numNeighbors);
+void add_node_to_list(List2 *list, int data);
+void print_simple_list(List2 list);
+void create_graph(List2 *arr);
+void add_node_to_graph(List2 *arr, int node, int data);
+void print_graph(List2 *graph);
+void zonaActual(int node, List2 *graph, int *numNeighbors);
 // Guardado
 void guardarEstadisticas(Jugador *jugador, Enemy *enemigos, int numEnemigos);
 void cargarEstadisticas(Jugador *jugador, Enemy **enemigos, int *numEnemigos);
+int isFileEmpty(const char *filename);
+
 #endif
